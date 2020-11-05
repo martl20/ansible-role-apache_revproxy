@@ -1,0 +1,69 @@
+---
+- name: 'Include OS specific vars'
+  include_vars: "{{ ansible_facts['os_family'] }}.yml"
+  no_log: true
+
+
+- name: 'Install packages'
+  package:
+    name: "{{ apache_revproxy_packages }}"
+
+- block:
+    - name: 'Remove default directories (RedHat)'
+      file:
+        path: '/etc/httpd/conf.d'
+        state: 'absent'
+
+    - name: 'Symlink httpd.conf'
+      file:
+        src: '/etc/httpd/httpd.conf'
+        dest: '/etc/httpd/conf/httpd.conf'
+        state: 'link'
+        force: true
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: 'Ensure directories'
+  file:
+    path: '{{ apache_revproxy_basedir }}/sites-enabled'
+    state: 'directory'
+
+- name: 'Ensure base config files'
+  template:
+    src: "{{ file }}.j2"
+    dest: "{{ apache_revproxy_basedir }}/{{ file }}"
+    mode: 0644
+  loop:
+    - "{{ apache_revproxy_main_config }}"
+  loop_control:
+    loop_var: 'file'
+  notify: 'reload apache'
+
+- name: 'Ensure service'
+  service:
+    name: "{{ apache_revproxy_service_name }}"
+    state: 'started'
+    enabled: true
+
+- name: 'Install app config file'
+  template:
+    src: "{{ app.type }}.conf.j2"
+    dest: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app.name }}.conf"
+    mode: 0644
+  loop: "{{ apache_apps | default([]) }}"
+  loop_control:
+    loop_var: 'app'
+  notify: 'reload apache'
+  when: app.state == 'present'
+
+- name: 'Remove app config file'
+  file:
+    path: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app.name }}.conf"
+    state: 'absent'
+  loop: "{{ apache_apps | default([]) }}"
+  loop_control:
+    loop_var: 'app'
+  notify: 'reload apache'
+  when: app.state == 'absent'
+
+- name: 'Include OS specific tasks'
+  include_tasks: "{{ ansible_facts['os_family'] }}.yml"

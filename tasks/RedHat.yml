@@ -1,0 +1,18 @@
+---
+- name: 'Ensure SElinux booleans'
+  ansible.posix.seboolean:
+    name: 'httpd_can_network_connect'
+    persistent: true
+    state: true
+
+- name: 'Ensure firewalld port'
+  ansible.posix.firewalld:
+    service: "{{ service }}"
+    state: 'enabled'
+    permanent: true
+    immediate: true
+  loop:
+    - 'http'
+    - 'https'
+  loop_control:
+    loop_var: 'service'

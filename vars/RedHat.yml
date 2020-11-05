@@ -1,0 +1,10 @@
+---
+apache_revproxy_packages:
+  - 'httpd'
+  - 'mod_ssl'
+  - 'mod_proxy_html'
+
+apache_revproxy_basedir: '/etc/httpd'
+apache_revproxy_logdir: '/var/log/httpd'
+apache_revproxy_main_config: 'httpd.conf'
+apache_revproxy_service_name: 'httpd'

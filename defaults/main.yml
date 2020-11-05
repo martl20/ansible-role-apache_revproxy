@@ -1,0 +1,22 @@
+---
+# Defaults file for Apache reverse proxy role
+#
+# apache_apps:
+#   - name: 'app.example.com'
+#     upstream: 'http://app.int.example.com:8000'
+#     type: 'simple'
+#     cert: '/etc/ssl/acme/app.example.com/app.example.com_fullchain.cer'
+#     key: '/etc/ssl/acme/app.example.com/app.example.com.key'
+#     hsts: true
+#     state: 'present'
+#   - name: 'disabled.example.com'
+#     state: 'absent'
+
+# SSL ciphers to use (default is very strict!)
+apache_ssl_ciphers: 'EECDH+AESGCM:EDH+AESGCM'
+
+# SSL protocols to enable
+apache_ssl_protocols: 'TLSv1.2'
+
+# Size to use for the DH parameters
+apache_dhparams_size: 4096

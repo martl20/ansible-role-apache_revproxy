@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+   ServerName {{ app.name }}
+   Redirect permanent / https://{{ app.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName {{ app.name }}
+
+  SSLEngine on
+
+  SSLCertificateFile {{ app.cert }}
+  SSLCertificateKeyFile {{ app.key }}
+
+  ProxyPass / {{ app.upstream }}/
+  ProxyPassReverse / {{ app.upstream }}/
+  RequestHeader set X-Forwarded-Proto "https"
+  {% if app.hsts %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app.name }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app.name }}_access.log common
+</VirtualHost>
