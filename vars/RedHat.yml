@@ -3,6 +3,7 @@ apache_revproxy_packages:
   - 'httpd'
   - 'mod_ssl'
   - 'mod_proxy_html'
+  - 'libsemanage-python'
 
 apache_revproxy_basedir: '/etc/httpd'
 apache_revproxy_logdir: '/var/log/httpd'

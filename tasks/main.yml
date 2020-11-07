@@ -3,7 +3,6 @@
   include_vars: "{{ ansible_facts['os_family'] }}.yml"
   no_log: true
 
-
 - name: 'Install packages'
   package:
     name: "{{ apache_revproxy_packages }}"
