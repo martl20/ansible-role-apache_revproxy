@@ -20,3 +20,7 @@ apache_ssl_protocols: 'TLSv1.2'
 
 # Size to use for the DH parameters
 apache_dhparams_size: 4096
+
+# Kerberos authentication
+# Supported systems: ipa
+apache_kerberos: ''

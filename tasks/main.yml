@@ -1,4 +1,9 @@
 ---
+- name: 'Check input'
+  assert:
+    that:
+      - apache_kerberos in apache_supported_kerberos
+
 - name: 'Include OS specific vars'
   include_vars: "{{ ansible_facts['os_family'] }}.yml"
   no_log: true
@@ -42,6 +47,10 @@
     name: "{{ apache_revproxy_service_name }}"
     state: 'started'
     enabled: true
+
+- name: 'Ensure Kerberos credentials'
+  include_tasks: "krb_{{ apache_kerberos }}.yml"
+  when: apache_kerberos != ''
 
 - name: 'Install app config file'
   template:

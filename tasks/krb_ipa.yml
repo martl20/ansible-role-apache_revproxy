@@ -1,0 +1,29 @@
+---
+# These tasks also require the freeipa.ansible_freeipa collection to be available
+- name: 'Ensure additional dependencies'
+  package:
+    name: "{{ apache_revproxy_kerberos_pkg }}"
+    state: 'present'
+
+- name: 'Ensure Kerberos Principal'
+  freeipa.ansible_freeipa.ipaservice:
+    name: "HTTP/{{ ansible_facts['fqdn'] }}@{{ ipaclient_domain | upper }}"
+    state: 'present'
+    ipaadmin_principal: "{{ ipaadmin_principal }}"
+    ipaadmin_password: "{{ ipaadmin_password }}"
+  delegate_to: "{{ apache_ipa_server }}"
+
+- name: 'Retrieve keytab'
+  shell: |
+    kinit -k
+    ipa-getkeytab -p HTTP/$(hostname -f)@{{ ipaclient_domain | upper }} -k "{{ apache_revproxy_basedir }}/krb.keytab"
+  args:
+    creates: "{{ apache_revproxy_basedir }}/krb.keytab"
+  notify: 'reload apache'
+
+- name: 'Ensure keytab ownership/permissions'
+  file:
+    path: "{{ apache_revproxy_basedir }}/krb.keytab"
+    owner: "{{ apache_revproxy_service_user }}"
+    group: "{{ apache_revproxy_service_user }}"
+    mode: 0400

@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-ServerRoot "/etc/httpd"
+ServerRoot "{{ apache_revproxy_basedir }}"
 
 Listen 80
 Listen 443 https
