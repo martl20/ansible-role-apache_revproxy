@@ -32,7 +32,7 @@
         name: "Ansible Galaxy",
         image: "registry.element-networks.nl/tools/molecule",
         commands: [
-          "ansible-galaxy import Thulium-Drake ansible-role-apache_revproxy --role-name=apache_revproxy --token $$GALAXY_TOKEN",
+          "ansible-galaxy import --token $$GALAXY_TOKEN Thulium-Drake ansible-role-apache_revproxy --role-name=apache_revproxy",
         ],
         environment:
           { GALAXY_TOKEN: { from_secret: "galaxy_token" } },
