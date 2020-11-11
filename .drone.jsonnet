@@ -32,8 +32,7 @@
         name: "Ansible Galaxy",
         image: "registry.element-networks.nl/tools/molecule",
         commands: [
-          "ansible-galaxy login --github-token $$GITHUB_TOKEN",
-          "ansible-galaxy import Thulium-Drake ansible-role-apache_revproxy --role-name=apache_revproxy",
+          "ansible-galaxy import Thulium-Drake ansible-role-apache_revproxy --role-name=apache_revproxy --token $$GITHUB_TOKEN",
         ],
         environment:
           { GITHUB_TOKEN: { from_secret: "github_token" } },
