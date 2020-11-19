@@ -50,7 +50,7 @@
 
 - name: 'Ensure Kerberos credentials'
   include_tasks: "krb_{{ apache_kerberos }}.yml"
-  when: apache_kerberos != ''
+  when: apache_kerberos != 'none'
 
 - name: 'Install app config file'
   template:
