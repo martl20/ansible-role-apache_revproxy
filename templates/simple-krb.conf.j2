@@ -19,7 +19,7 @@
     Krb5Keytab /etc/httpd/krb.keytab
     KrbLocalUserMapping On
     KrbMethodNegotiate On
-    KrbMethodK5Passwd On
+    KrbMethodK5Passwd {% if app.krb_passwd %}On{% else %}Off{% endif %}
     require valid-user
   </Location>
 
