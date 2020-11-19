@@ -23,4 +23,4 @@ apache_dhparams_size: 4096
 
 # Kerberos authentication
 # Supported systems: ipa
-apache_kerberos: ''
+apache_kerberos: 'none'
