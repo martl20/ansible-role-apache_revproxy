@@ -11,17 +11,34 @@
   SSLCertificateFile {{ app.cert }}
   SSLCertificateKeyFile {{ app.key }}
 
-  <Location />
-    AuthType Kerberos
-    AuthName "Restricted Access"
-    KrbAuthRealms {{ ipaclient_domain | upper }}
-    KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
-    Krb5Keytab /etc/httpd/krb.keytab
-    KrbLocalUserMapping On
-    KrbMethodNegotiate On
-    KrbMethodK5Passwd {% if app.krb_passwd %}On{% else %}Off{% endif %}
-    require valid-user
-  </Location>
+  <IfModule mod_auth_gssapi.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType GSSAPI
+      GssapiCredStore keytab:/etc/httpd/krb.keytab
+      GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
+      GssapiLocalName On
+      GssapiBasicAuth {% if app.krb_passwd %}On{% else %}Off{% endif %}
+
+      GssapiAllowedMech krb5
+      require valid-user
+    </Location>
+  </IfModule>
+
+  <IfModule mod_auth_kerb.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType Kerberos
+      KrbAuthRealms {{ ipaclient_domain | upper }}
+      KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
+      Krb5Keytab /etc/httpd/krb.keytab
+      KrbLocalUserMapping On
+      KrbMethodNegotiate On
+      KrbMethodK5Passwd {% if app.krb_passwd %}On{% else %}Off{% endif %}
+
+      require valid-user
+    </Location>
+  </IfModule>
 
   ProxyPass / {{ app.upstream }}/
   ProxyPassReverse / {{ app.upstream }}/
