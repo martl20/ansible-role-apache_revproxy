@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: Jeffrey van Pelt
+  author: thulium_drake
   description: Configures a Apache reverse proxy
   company:
   role_name: apache_revproxy
