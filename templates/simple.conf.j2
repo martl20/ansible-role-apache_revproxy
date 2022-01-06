@@ -11,6 +11,8 @@
   SSLCertificateFile {{ app.cert }}
   SSLCertificateKeyFile {{ app.key }}
 
+  ProxyRequests Off
+  ProxyPreserveHost On
   ProxyPass / {{ app.upstream }}/
   ProxyPassReverse / {{ app.upstream }}/
   RequestHeader set X-Forwarded-Proto "https"

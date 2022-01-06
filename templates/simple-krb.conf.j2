@@ -40,6 +40,8 @@
     </Location>
   </IfModule>
 
+  ProxyRequests Off
+  ProxyPreserveHost On
   ProxyPass / {{ app.upstream }}/
   ProxyPassReverse / {{ app.upstream }}/
   RequestHeader set X-Forwarded-Proto "https"
