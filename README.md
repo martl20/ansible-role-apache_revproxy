@@ -7,3 +7,6 @@ It will install apache and provide a template for generic reverse proxy configur
 
 Check [defaults/main.yml](the defaults file) for an example setup.
 
+## Kerberos with IPA
+When using Kerberos with IPA, this role can create the Kerberos principal in IPA, this requires
+a user with administrative privileges for the desired host.

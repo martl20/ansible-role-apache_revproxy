@@ -9,9 +9,10 @@
   freeipa.ansible_freeipa.ipaservice:
     name: "HTTP/{{ ansible_facts['fqdn'] }}@{{ ipaclient_domain | upper }}"
     state: 'present'
-    ipaadmin_principal: "{{ ipaadmin_principal }}"
-    ipaadmin_password: "{{ ipaadmin_password }}"
+    ipaadmin_principal: "{{ apache_ipa_username }}"
+    ipaadmin_password: "{{ apache_ipa_password }}"
   delegate_to: "{{ apache_ipa_server }}"
+  when: apache_ipa_manage_keytab
 
 - name: 'Retrieve keytab'
   shell: |

@@ -25,3 +25,10 @@ apache_dhparams_size: 4096
 # Kerberos authentication
 # Supported systems: ipa
 apache_kerberos: 'none'
+# Automatically create the required Kerberos Principal in IPA
+# Requires credentials for a user with administrative privileges on the host in IPA
+apache_ipa_manage_principal: true
+
+# IPA credentials, the default vars match freeipa.ansible_freeipa collection roles
+apache_ipa_username: "{{ ipaadmin_principal }}"
+apache_ipa_password: "{{ ipaadmin_password }}"
