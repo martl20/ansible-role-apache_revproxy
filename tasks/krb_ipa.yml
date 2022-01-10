@@ -12,7 +12,7 @@
     ipaadmin_principal: "{{ apache_ipa_username }}"
     ipaadmin_password: "{{ apache_ipa_password }}"
   delegate_to: "{{ apache_ipa_server }}"
-  when: apache_ipa_manage_keytab
+  when: apache_ipa_manage_principal
 
 - name: 'Retrieve keytab'
   shell: |
