@@ -17,6 +17,7 @@
       file:
         path: '/etc/httpd/conf.d'
         state: 'absent'
+      when: not apache_certbot
 
     - name: 'Symlink httpd.conf'
       file:
@@ -30,11 +31,16 @@
   file:
     path: '{{ apache_revproxy_basedir }}/sites-enabled'
     state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: 0755
 
 - name: 'Ensure base config files'
   template:
     src: "{{ file }}.j2"
     dest: "{{ apache_revproxy_basedir }}/{{ file }}"
+    owner: 'root'
+    group: 'root'
     mode: 0644
   loop:
     - "{{ apache_revproxy_main_config }}"
@@ -56,6 +62,8 @@
   template:
     src: "{{ app.type }}.conf.j2"
     dest: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app.name }}.conf"
+    owner: 'root'
+    group: 'root'
     mode: 0644
   loop: "{{ apache_apps | default([]) }}"
   loop_control:

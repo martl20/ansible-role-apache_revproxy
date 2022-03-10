@@ -29,3 +29,6 @@ apache_ipa_manage_principal: true
 # IPA credentials, the default vars match freeipa.ansible_freeipa collection roles
 apache_ipa_username: "{{ ipaadmin_principal }}"
 apache_ipa_password: "{{ ipaadmin_password }}"
+
+# Set to true if you are using certbot
+apache_certbot: false
