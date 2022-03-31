@@ -8,6 +8,7 @@
 - name: 'Ensure Kerberos Principal'
   freeipa.ansible_freeipa.ipaservice:
     name: "HTTP/{{ ansible_facts['fqdn'] }}@{{ ipaclient_domain | upper }}"
+    principal: "{{ apache_additional_principals | default(omit) }}"
     state: 'present'
     ipaadmin_principal: "{{ apache_ipa_username }}"
     ipaadmin_password: "{{ apache_ipa_password }}"

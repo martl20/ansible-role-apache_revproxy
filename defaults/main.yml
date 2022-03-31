@@ -22,9 +22,18 @@ apache_ssl_protocols: 'TLSv1.2'
 # Kerberos authentication
 # Supported systems: ipa
 apache_kerberos: 'none'
+
+# IPA server used when apache_kerberos == 'ipa'
+apache_ipa_server: 'ipa.example.com'
+
 # Automatically create the required Kerberos Principal in IPA
 # Requires credentials for a user with administrative privileges on the host in IPA
 apache_ipa_manage_principal: true
+
+# By default the role will only create a Kerberos Principal for the FQDN, set the list below
+# to define any additional hostnames that this system will serve
+apache_additional_principals: []
+# - "HTTP/nothostname.example.com@{{ ipaclient_domain | uppper }}"
 
 # IPA credentials, the default vars match freeipa.ansible_freeipa collection roles
 apache_ipa_username: "{{ ipaadmin_principal }}"
