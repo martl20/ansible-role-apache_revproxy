@@ -33,7 +33,10 @@ apache_ipa_manage_principal: true
 # By default the role will only create a Kerberos Principal for the FQDN, set the list below
 # to define any additional hostnames that this system will serve
 apache_additional_principals: []
-# - "HTTP/nothostname.example.com@{{ ipaclient_domain | uppper }}"
+  # - "HTTP/nothostname.example.com@{{ ipaclient_domain | uppper }}"
+
+apache_kerberos_windows_compat: false  # Disables GSSAPI negotiation on Windows browsers
+                                       # which could fix some authentication issues
 
 # IPA credentials, the default vars match freeipa.ansible_freeipa collection roles
 apache_ipa_username: "{{ ipaadmin_principal }}"
