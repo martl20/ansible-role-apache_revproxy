@@ -11,6 +11,11 @@ Check [defaults/main.yml](the defaults file) for an example setup.
 When using Kerberos with IPA, this role can create the Kerberos principal in IPA, this requires
 a user with administrative privileges for the desired host.
 
+If you are using HBAC rules in IPA, you can limit access to the proxied application by setting ```hbac_service```,
+this will limit access to the entire app to users that match the HBAC rule.
+
+If you require more fine-grained access control, you'll need to make a custom template.
+
 ## PAM authentication
 To make Apache authenticate users over PAM requires a little extra work (this role does not do it for you, yet)
 

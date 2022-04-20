@@ -1,48 +1,33 @@
 <VirtualHost *:80>
-   ServerName {{ app.name }}
-   Redirect permanent / https://{{ app.name }}/
+   ServerName {{ app['name'] }}
+   Redirect permanent / https://{{ app['name'] }}/
 </VirtualHost>
 
 <VirtualHost *:443>
-  ServerName {{ app.name }}
+  ServerName {{ app['name'] }}
 
   SSLEngine on
 
-  SSLCertificateFile {{ app.cert }}
-  SSLCertificateKeyFile {{ app.key }}
+  SSLCertificateFile {{ app['cert'] }}
+  SSLCertificateKeyFile {{ app['key'] }}
 
   <Location />
     AuthType Basic
     AuthName "Restricted Access"
     AuthBasicProvider PAM
-    AuthPAMService {{ app.pam_service }}
+    AuthPAMService {{ app['pam_service'] }}
     require valid-user
   </Location>
 
-  <IfModule mod_auth_kerb.c>
-    <Location />
-      AuthName "Restricted Access"
-      AuthType Kerberos
-      KrbAuthRealms {{ ipaclient_domain | upper }}
-      KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
-      Krb5Keytab /etc/httpd/krb.keytab
-      KrbLocalUserMapping On
-      KrbMethodNegotiate On
-      KrbMethodK5Passwd {% if app.krb_passwd %}On{% else %}Off{% endif %}
-
-      require valid-user
-    </Location>
-  </IfModule>
-
   ProxyRequests Off
   ProxyPreserveHost On
-  ProxyPass / {{ app.upstream }}/
-  ProxyPassReverse / {{ app.upstream }}/
+  ProxyPass / {{ app['upstream'] }}/
+  ProxyPassReverse / {{ app['upstream'] }}/
   RequestHeader set X-Forwarded-Proto "https"
   RequestHeader set X-WebAuth-User expr=%{REMOTE_USER}
 
-  {% if app.hsts %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+  {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
 
-  ErrorLog {{ apache_revproxy_logdir }}/{{ app.name }}_error.log
-  CustomLog {{ apache_revproxy_logdir }}/{{ app.name }}_access.log common
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
 </VirtualHost>

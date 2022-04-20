@@ -1,15 +1,15 @@
 <VirtualHost *:80>
-   ServerName {{ app.name }}
-   Redirect permanent / https://{{ app.name }}/
+   ServerName {{ app['name'] }}
+   Redirect permanent / https://{{ app['name'] }}/
 </VirtualHost>
 
 <VirtualHost *:443>
-  ServerName {{ app.name }}
+  ServerName {{ app['name'] }}
 
   SSLEngine on
 
-  SSLCertificateFile {{ app.cert }}
-  SSLCertificateKeyFile {{ app.key }}
+  SSLCertificateFile {{ app['cert'] }}
+  SSLCertificateKeyFile {{ app['key'] }}
 
   <IfModule mod_auth_gssapi.c>
     <Location />
@@ -17,13 +17,17 @@
       AuthType GSSAPI
       {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
 
-      GssapiCredStore keytab:/etc/httpd/krb.keytab
+      GssapiCredStore keytab:/etc/httpd/krb['key']tab
       GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
       GssapiLocalName On
-      GssapiBasicAuth {% if app.krb_passwd %}On{% else %}Off{% endif %}
+      GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
 
       GssapiAllowedMech krb5
+      {% if app['hbac_service'] is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
       require valid-user
+      {% endif %}
     </Location>
   </IfModule>
 
@@ -33,22 +37,26 @@
       AuthType Kerberos
       KrbAuthRealms {{ ipaclient_domain | upper }}
       KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
-      Krb5Keytab /etc/httpd/krb.keytab
+      Krb5Keytab /etc/httpd/krb['key']tab
       KrbLocalUserMapping On
       KrbMethodNegotiate On
-      KrbMethodK5Passwd {% if app.krb_passwd %}On{% else %}Off{% endif %}
+      KrbMethodK5Passwd {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
 
+      {% if app.hbac_service is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
       require valid-user
+      {% endif %}
     </Location>
   </IfModule>
 
   ProxyRequests Off
   ProxyPreserveHost On
-  ProxyPass / {{ app.upstream }}/
-  ProxyPassReverse / {{ app.upstream }}/
+  ProxyPass / {{ app['upstream'] }}/
+  ProxyPassReverse / {{ app['upstream'] }}/
   RequestHeader set X-Forwarded-Proto "https"
-  {% if app.hsts %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+  {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
 
-  ErrorLog {{ apache_revproxy_logdir }}/{{ app.name }}_error.log
-  CustomLog {{ apache_revproxy_logdir }}/{{ app.name }}_access.log common
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
 </VirtualHost>
