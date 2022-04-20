@@ -3,6 +3,7 @@ apache_revproxy_packages:
   - 'httpd'
   - 'mod_ssl'
   - 'mod_proxy_html'
+  - 'mod_authnz_pam'
   - 'python3-libsemanage'
 
 apache_revproxy_basedir: '/etc/httpd'

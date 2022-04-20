@@ -83,6 +83,16 @@
     loop_var: 'app'
   when: app['hbac_service'] is defined
 
+- name: 'Ensure Apache module enabled'
+  ansible.builtin.copy:
+    content: |
+      # This file is managed by Ansible, YOUR CHANGES WILL BE LOST
+      LoadModule authnz_pam_module modules/mod_authnz_pam.so
+    dest: '/etc/httpd/conf.modules.d/55-authnz_pam.conf'
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+
 - name: 'Remove app config file'
   ansible.builtin.file:
     path: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app['name'] }}.conf"
