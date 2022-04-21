@@ -17,7 +17,7 @@
       AuthType GSSAPI
       {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
 
-      GssapiCredStore keytab:/etc/httpd/krb['key']tab
+      GssapiCredStore keytab:/etc/httpd/krb.keytab
       GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
       GssapiLocalName On
       GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
@@ -37,7 +37,7 @@
       AuthType Kerberos
       KrbAuthRealms {{ ipaclient_domain | upper }}
       KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
-      Krb5Keytab /etc/httpd/krb['key']tab
+      Krb5Keytab /etc/httpd/krb.keytab
       KrbLocalUserMapping On
       KrbMethodNegotiate On
       KrbMethodK5Passwd {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
