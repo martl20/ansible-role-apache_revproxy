@@ -12,18 +12,16 @@ When using Kerberos with IPA, this role can create the Kerberos principal in IPA
 a user with administrative privileges for the desired host.
 
 If you are using HBAC rules in IPA, you can limit access to the proxied application by setting ```hbac_service```,
-this will limit access to the entire app to users that match the HBAC rule.
+this will limit access to the entire app to users that match the HBAC rule. The role will configure the required
+steps in PAM (creating the authentication policy file and setting up SELinux when required).
 
 If you require more fine-grained access control, you'll need to make a custom template.
 
-## PAM authentication
-To make Apache authenticate users over PAM requires a little extra work (this role does not do it for you, yet)
-
-First of all, make sure that you have ```mod_authnz_pam``` installed on your system
+## PAM authentication (with local users)
+To make Apache authenticate local users via PAM requires a little extra work
 
 Then fix some permissions and set up SELinux:
 ```
-setsebool -P httpd_mod_auth_pam 1
 groupadd shadow
 chown root:shadow /etc/shadow /usr/sbin/unix_chkpwd
 chmod 6755 /usr/sbin/unix_chkpwd

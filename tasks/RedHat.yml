@@ -1,9 +1,14 @@
 ---
 - name: 'Ensure SElinux booleans'
   ansible.posix.seboolean:
-    name: 'httpd_can_network_connect'
+    name: "{{ sebool }}"
     persistent: true
     state: true
+  loop:
+    - 'httpd_can_network_connect'
+    - 'httpd_mod_auth_pam'
+  loop_control:
+    loop_var: 'sebool'
 
 - name: 'Ensure firewalld port'
   ansible.posix.firewalld:
