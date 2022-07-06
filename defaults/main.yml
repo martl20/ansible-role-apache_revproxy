@@ -9,6 +9,7 @@
 #     key: '/etc/ssl/acme/app.example.com/app.example.com.key'
 #     hsts: true
 #     krb_passwd: true
+#     krb_strip_realm: true  # removes the @realm part from the username
 #     hbac_service: 'app'  # if not defined, _all_ valid IPA users are allowed access
 #     state: 'present'
 #   - name: 'disabled.example.com'
