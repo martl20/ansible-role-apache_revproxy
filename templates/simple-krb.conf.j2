@@ -16,6 +16,7 @@
       AuthName "Restricted Access"
       AuthType GSSAPI
       {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
+      {% if gssapi_connection_bound %}GssapiConnectionBound On{% endif %}
 
       GssapiCredStore keytab:/etc/httpd/krb.keytab
       GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}

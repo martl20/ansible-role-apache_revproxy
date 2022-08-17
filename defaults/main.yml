@@ -11,6 +11,7 @@
 #     krb_passwd: true
 #     krb_strip_realm: true  # removes the @realm part from the username
 #     hbac_service: 'app'  # if not defined, _all_ valid IPA users are allowed access
+#     gssapi_connection_bound: false  # Required as a workaround sometimes
 #     state: 'present'
 #   - name: 'disabled.example.com'
 #     state: 'absent'
