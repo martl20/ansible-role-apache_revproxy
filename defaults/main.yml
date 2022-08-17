@@ -11,7 +11,6 @@
 #     krb_passwd: true
 #     krb_strip_realm: true  # removes the @realm part from the username
 #     hbac_service: 'app'  # if not defined, _all_ valid IPA users are allowed access
-#     gssapi_connection_bound: false  # Required as a workaround sometimes
 #     state: 'present'
 #   - name: 'disabled.example.com'
 #     state: 'absent'
@@ -40,6 +39,7 @@ apache_additional_principals: []
 
 apache_kerberos_windows_compat: false  # Disables GSSAPI negotiation on Windows browsers
                                        # which could fix some authentication issues
+gssapi_connection_bound: false         # Required as a workaround sometimes
 
 # IPA credentials, the default vars match freeipa.ansible_freeipa collection roles
 apache_ipa_username: "{{ ipaadmin_principal }}"
