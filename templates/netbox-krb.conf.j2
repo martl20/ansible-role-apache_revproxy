@@ -1,0 +1,75 @@
+<VirtualHost *:80>
+   ServerName {{ app['name'] }}
+   Redirect permanent / https://{{ app['name'] }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName {{ app['name'] }}
+
+  SSLEngine on
+
+  SSLCertificateFile {{ app['cert'] }}
+  SSLCertificateKeyFile {{ app['key'] }}
+
+  <IfModule mod_auth_gssapi.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType GSSAPI
+      {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
+      {% if gssapi_connection_bound %}GssapiConnectionBound On{% endif %}
+
+      GssapiCredStore keytab:/etc/httpd/krb.keytab
+      GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
+      GssapiLocalName On
+      GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
+
+      GssapiAllowedMech krb5
+      {% if app['hbac_service'] is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
+      require valid-user
+      {% endif %}
+    </Location>
+  </IfModule>
+
+  <IfModule mod_auth_kerb.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType Kerberos
+      KrbAuthRealms {{ ipaclient_domain | upper }}
+      KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
+      Krb5Keytab /etc/httpd/krb.keytab
+      KrbLocalUserMapping On
+      KrbMethodNegotiate On
+      KrbMethodK5Passwd {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
+
+      {% if app.hbac_service is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
+      require valid-user
+      {% endif %}
+    </Location>
+  </IfModule>
+
+  <Directory /opt/netbox/netbox/static>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Require all granted
+  </Directory>
+
+  <Location /static>
+    ProxyPass !
+  </Location>
+
+  ProxyRequests Off
+  ProxyPreserveHost On
+  ProxyPass / {{ app['upstream'] }}/
+  ProxyPassReverse / {{ app['upstream'] }}/
+  RequestHeader set X-Forwarded-Proto "https"
+  RequestHeader set X-Remote-User %{REMOTE_USER}s
+  {% if app['krb_strip_realm'] | default(false) %}RequestHeader edit X-Remote-User (?=@)(\S+) ''{% endif %}
+  {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
+</VirtualHost>
