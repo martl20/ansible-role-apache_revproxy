@@ -22,7 +22,12 @@
     GssapiBasicAuth On  # Required to allow zabbix-cli to log in
 
     GssapiAllowedMech krb5
+    {% if app['hbac_service'] is defined %}
+    require pam-account {{ app['hbac_service'] }}
+    {% else %}
     require valid-user
+    {% endif %}
+
   </Location>
 
   RedirectMatch ^/$ /zabbix/
