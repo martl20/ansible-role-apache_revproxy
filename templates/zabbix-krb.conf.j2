@@ -20,6 +20,9 @@
     GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
     GssapiLocalName On
     GssapiBasicAuth On  # Required to allow zabbix-cli to log in
+    {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
+
+    {% if gssapi_connection_bound %}GssapiConnectionBound On{% endif %}
 
     GssapiAllowedMech krb5
     {% if app['hbac_service'] is defined %}
