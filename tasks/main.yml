@@ -12,7 +12,8 @@
   ansible.builtin.package:
     name: "{{ apache_revproxy_packages }}"
 
-- block:
+- when: ansible_facts['os_family'] == 'RedHat'
+  block:
     - name: 'Remove default directories (RedHat)'
       ansible.builtin.file:
         path: '/etc/httpd/conf.d'
@@ -25,7 +26,35 @@
         dest: '/etc/httpd/conf/httpd.conf'
         state: 'link'
         force: true
-  when: ansible_facts['os_family'] == 'RedHat'
+
+    - name: 'Ensure Apache module enabled'
+      ansible.builtin.copy:
+        content: |
+          # This file is managed by Ansible, YOUR CHANGES WILL BE LOST
+          LoadModule authnz_pam_module modules/mod_authnz_pam.so
+        dest: '/etc/httpd/conf.modules.d/55-authnz_pam.conf'
+        owner: 'root'
+        group: 'root'
+        mode: 0644
+
+- when: ansible_facts['os_family'] == 'Debian'
+  block:
+    - name: 'Ensure modules enabled'
+      ansible.builtin.file:
+        src: "../mods-available/{{ mod_file }}"
+        dest: "{{ apache_revproxy_basedir }}/mods-enabled/{{ mod_file }}"
+        force: true
+        state: 'link'
+      loop:
+        - 'ssl.conf'
+        - 'ssl.load'
+        - 'proxy.load'
+        - 'proxy_html.conf'
+        - 'proxy_html.load'
+        - 'xml2enc.load'
+        - 'auth_gssapi.load'
+      loop_control:
+        loop_var: 'mod_file'
 
 - name: 'Ensure directories'
   ansible.builtin.file:
@@ -35,17 +64,13 @@
     group: 'root'
     mode: 0755
 
-- name: 'Ensure base config files'
+- name: 'Ensure base config file'
   ansible.builtin.template:
-    src: "{{ file }}.j2"
-    dest: "{{ apache_revproxy_basedir }}/{{ file }}"
+    src: "httpd.conf.j2"
+    dest: "{{ apache_revproxy_basedir }}/{{ apache_revproxy_main_config }}"
     owner: 'root'
     group: 'root'
     mode: 0644
-  loop:
-    - "{{ apache_revproxy_main_config }}"
-  loop_control:
-    loop_var: 'file'
   notify: 'reload apache'
 
 - name: 'Ensure service'
@@ -83,16 +108,6 @@
     loop_var: 'app'
   when: app['hbac_service'] is defined
 
-- name: 'Ensure Apache module enabled'
-  ansible.builtin.copy:
-    content: |
-      # This file is managed by Ansible, YOUR CHANGES WILL BE LOST
-      LoadModule authnz_pam_module modules/mod_authnz_pam.so
-    dest: '/etc/httpd/conf.modules.d/55-authnz_pam.conf'
-    owner: 'root'
-    group: 'root'
-    mode: 0644
-
 - name: 'Remove app config file'
   ansible.builtin.file:
     path: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app['name'] }}.conf"
@@ -104,4 +119,8 @@
   when: app['state'] == 'absent'
 
 - name: 'Include OS specific tasks'
-  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+  ansible.builtin.include_tasks: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ ansible_facts['os_family'] }}.yml"
+      skip: true
