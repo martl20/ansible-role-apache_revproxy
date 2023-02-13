@@ -5,7 +5,7 @@ Listen 80
 Listen 443 https
 
 {% if ansible_facts['os_family'] == 'RedHat' %}
-Include {{ apache_revproxy_moduledir }}
+Include conf.modules.d/*.conf
 {% elif ansible_facts['os_family'] == 'Debian' %}
 IncludeOptional mods-enabled/*.load
 IncludeOptional mods-enabled/*.conf
