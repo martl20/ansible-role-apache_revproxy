@@ -13,6 +13,8 @@
   SSLCertificateFile {{ app['cert'] }}
   SSLCertificateKeyFile {{ app['key'] }}
 
+  {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+
   <Location />
     AuthName "Restricted Access"
     AuthType GSSAPI

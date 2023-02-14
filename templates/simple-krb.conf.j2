@@ -19,7 +19,7 @@
 
       {% if gssapi_connection_bound %}GssapiConnectionBound On{% endif %}
 
-      GssapiCredStore keytab:/etc/httpd/krb.keytab
+      GssapiCredStore keytab:{{ apache_revproxy_basedir }}/krb.keytab
       GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
       GssapiLocalName On
       GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}

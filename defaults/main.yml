@@ -47,3 +47,9 @@ apache_ipa_password: "{{ ipaadmin_password }}"
 
 # Set to true if you are using certbot
 apache_certbot: false
+
+# Install extra packages on the system, e.g. to set up PHP support
+apache_revproxy_extra_packages: []
+# e.g. for Dokuwiki on Debian
+# - 'libapache2-mod-php'
+# - 'php-xml'
