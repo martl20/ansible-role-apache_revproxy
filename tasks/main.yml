@@ -12,6 +12,7 @@
   ansible.builtin.package:
     name: "{{ apache_revproxy_packages }}"
     state: 'present'
+  register: 'apache_revproxy_package_installed'
 
 - when: ansible_facts['os_family'] == 'RedHat'
   block:
@@ -19,7 +20,9 @@
       ansible.builtin.file:
         path: '/etc/httpd/conf.d'
         state: 'absent'
-      when: not apache_certbot
+      when:
+        - not apache_certbot
+        - not apache_revproxy_package_installed['changed']
 
     - name: 'Symlink httpd.conf'
       ansible.builtin.file:
