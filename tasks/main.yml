@@ -22,7 +22,7 @@
         state: 'absent'
       when:
         - not apache_certbot
-        - not apache_revproxy_package_installed['changed']
+        - apache_revproxy_package_installed['changed']
 
     - name: 'Symlink httpd.conf'
       ansible.builtin.file:
