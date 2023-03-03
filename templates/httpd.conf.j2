@@ -6,7 +6,7 @@ Listen 443 https
 
 {% if ansible_facts['os_family'] == 'RedHat' %}
 Include conf.modules.d/*.conf
-Include conf.d/*.conf
+IncludeOptional conf.d/*.conf
 {% elif ansible_facts['os_family'] == 'Debian' %}
 IncludeOptional mods-enabled/*.load
 IncludeOptional mods-enabled/*.conf

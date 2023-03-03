@@ -1,0 +1,30 @@
+<VirtualHost *:80>
+   ServerName {{ app['name'] }}
+   Redirect permanent / https://{{ app['name'] }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName {{ app['name'] }}
+
+  SSLEngine on
+
+  SSLCertificateFile {{ app['cert'] }}
+  SSLCertificateKeyFile {{ app['key'] }}
+
+  AddDefaultCharset UTF-8
+  ScriptAlias / /opt/rt5/sbin/rt-server.fcgi/
+  DocumentRoot "/opt/rt5/share/html"
+
+  <Location />
+     Require all granted
+     Options +ExecCGI
+     AddHandler fcgid-script fcgi
+  </Location>
+
+  <Location /REST/1.0/NoAuth/mail-gateway>
+     Require local
+  </Location>
+
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
+</VirtualHost>
