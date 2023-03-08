@@ -64,6 +64,7 @@
         - 'xml2enc.load'
         - 'auth_gssapi.load'
         - 'socache_shmcb.load'
+        - 'headers.load'
       loop_control:
         loop_var: 'mod_file'
 
