@@ -52,6 +52,8 @@
     </Location>
   </IfModule>
 
+{{ app.extra_config_after_auth | default('') }}
+
   ProxyRequests Off
   ProxyPreserveHost On
   ProxyPass / {{ app['upstream'] }}/

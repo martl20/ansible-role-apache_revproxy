@@ -12,6 +12,12 @@
 #     krb_strip_realm: true  # removes the @realm part from the username
 #     hbac_service: 'app'  # if not defined, _all_ valid IPA users are allowed access
 #     state: 'present'
+#     extra_config_after_auth: |
+#       # Optional: Extra config block that will be inserted _after_ all Kerberos authentication config
+#       # e.g. to allow access to public endpoints without Kerberos tickets
+#       <Location /public>
+#         Require all granted
+#       </Location>
 #   - name: 'disabled.example.com'
 #     state: 'absent'
 
