@@ -28,6 +28,13 @@
 
   {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
 
+  {% if app['websocket'] | default(false) -%}
+  RewriteEngine On
+  RewriteCond %{HTTP:Connection} Upgrade [NC]
+  RewriteCond %{HTTP:Upgrade} websocket [NC]
+  RewriteRule /(.*) {{ app['websocket_url'] }} [P,L]
+  {% endif %}
+
   ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
   CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
 </VirtualHost>
