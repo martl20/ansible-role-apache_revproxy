@@ -1,0 +1,73 @@
+<VirtualHost *:80>
+   ServerName {{ app['name'] }}
+   Redirect permanent / https://{{ app['name'] }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName {{ app['name'] }}
+
+  SSLEngine on
+
+  SSLCertificateFile {{ app['cert'] }}
+  SSLCertificateKeyFile {{ app['key'] }}
+
+  DocumentRoot /var/www/nextcloud
+
+  <IfModule mod_auth_gssapi.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType GSSAPI
+      {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
+
+      {% if gssapi_connection_bound %}GssapiConnectionBound On{% endif %}
+
+      GssapiCredStore keytab:{{ apache_revproxy_basedir }}/krb.keytab
+      GssapiAcceptorName HTTP@{{ ansible_facts['fqdn'] }}
+      GssapiLocalName On
+      GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
+
+      GssapiAllowedMech krb5
+      {% if app['hbac_service'] is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
+      require valid-user
+      {% endif %}
+    </Location>
+  </IfModule>
+
+  <IfModule mod_auth_kerb.c>
+    <Location />
+      AuthName "Restricted Access"
+      AuthType Kerberos
+      KrbAuthRealms {{ ipaclient_domain | upper }}
+      KrbServiceName HTTP/{{ ansible_facts['fqdn'] }}
+      Krb5Keytab /etc/httpd/krb.keytab
+      KrbLocalUserMapping On
+      KrbMethodNegotiate On
+      KrbMethodK5Passwd {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
+
+      {% if app.hbac_service is defined %}
+      require pam-account {{ app['hbac_service'] }}
+      {% else %}
+      require valid-user
+      {% endif %}
+    </Location>
+  </IfModule>
+
+  <Directory /var/www/nextcloud/>
+    Options +FollowSymlinks
+    AllowOverride All
+
+    <IfModule mod_dav.c>
+      Dav off
+    </IfModule>
+
+    SetEnv HOME /var/www/nextcloud
+    SetEnv HTTP_HOME /var/www/nextcloud
+  </Directory>
+
+  {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
+
+  ErrorLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_error.log
+  CustomLog {{ apache_revproxy_logdir }}/{{ app['name'] }}_access.log common
+</VirtualHost>
