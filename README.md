@@ -29,3 +29,6 @@ chmod 0040 /etc/shadow
 ```
 
 Note that this will probably break when you install updates!
+
+## Template specific notes
+* The nextcloud-krb template requires the 'SSO & SAML authentication' app installed and configured with 'Environment authentication' set to REMOTE_USER.
