@@ -24,6 +24,23 @@
         - not apache_certbot
         - apache_revproxy_package_installed['changed']
 
+    - name: 'Ensure conf.d exists (RedHat)'
+      ansible.builtin.file:
+        path: '/etc/httpd/conf.d'
+        state: 'directory'
+        owner: 'root'
+        group: 'root'
+        mode: '0755'
+
+    - name: 'Ensure default ssl.conf is empty'
+      ansible.builtin.copy:
+        dest: '/etc/httpd/conf.d/ssl.conf'
+        content: |
+          # This file is managed by Ansible, YOUR CHANGES WILL BE LOST!
+        owner: 'root'
+        group: 'root'
+        mode: '0644'
+
     - name: 'Symlink httpd.conf'
       ansible.builtin.file:
         src: '/etc/httpd/httpd.conf'
