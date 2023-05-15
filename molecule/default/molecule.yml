@@ -4,7 +4,7 @@ dependency:
 driver:
   name: ${DRIVER_NAME:-docker}
 platforms:
-  - name: "empty"
+  - name: "apache"
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-debian10}-ansible:latest"
     command: '/lib/systemd/systemd'
     pre_build_image: true
