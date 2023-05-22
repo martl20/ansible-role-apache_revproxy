@@ -28,4 +28,4 @@
     path: "{{ apache_revproxy_basedir }}/krb.keytab"
     owner: "{{ apache_revproxy_service_user }}"
     group: "{{ apache_revproxy_service_user }}"
-    mode: 0400
+    mode: '0400'

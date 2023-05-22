@@ -14,7 +14,8 @@
     state: 'present'
   register: 'apache_revproxy_package_installed'
 
-- when: ansible_facts['os_family'] == 'RedHat'
+- name: 'Setup RHEL'
+  when: ansible_facts['os_family'] == 'RedHat'
   block:
     - name: 'Remove default directories (RedHat)'
       ansible.builtin.file:
@@ -56,7 +57,7 @@
         dest: '/etc/httpd/conf.modules.d/55-authnz_pam.conf'
         owner: 'root'
         group: 'root'
-        mode: 0644
+        mode: '0644'
 
 - name: 'Install extra packages'
   ansible.builtin.package:
@@ -64,7 +65,8 @@
     state: 'present'
   when: apache_revproxy_extra_packages | length > 0
 
-- when: ansible_facts['os_family'] == 'Debian'
+- name: 'Setup Debian'
+  when: ansible_facts['os_family'] == 'Debian'
   block:
     - name: 'Ensure modules enabled'
       ansible.builtin.file:
@@ -91,7 +93,7 @@
     state: 'directory'
     owner: 'root'
     group: 'root'
-    mode: 0755
+    mode: '0755'
 
 - name: 'Ensure base config file'
   ansible.builtin.template:
@@ -99,8 +101,8 @@
     dest: "{{ apache_revproxy_basedir }}/{{ apache_revproxy_main_config }}"
     owner: 'root'
     group: 'root'
-    mode: 0644
-  notify: 'reload apache'
+    mode: '0644'
+  notify: 'Reload apache'
 
 - name: 'Ensure service'
   ansible.builtin.service:
@@ -118,11 +120,11 @@
     dest: "{{ apache_revproxy_basedir }}/sites-enabled/{{ app['name'] }}.conf"
     owner: 'root'
     group: 'root'
-    mode: 0644
+    mode: '0644'
   loop: "{{ apache_apps | default([]) }}"
   loop_control:
     loop_var: 'app'
-  notify: 'reload apache'
+  notify: 'Reload apache'
   when: app['state'] == 'present'
 
 - name: 'Ensure PAM service files for HBAC enabled apps'
@@ -131,7 +133,7 @@
     dest: "/etc/pam.d/{{ app['hbac_service'] }}"
     owner: 'root'
     group: 'root'
-    mode: 0644
+    mode: '0644'
   loop: "{{ apache_apps | default([]) }}"
   loop_control:
     loop_var: 'app'
@@ -144,12 +146,12 @@
   loop: "{{ apache_apps | default([]) }}"
   loop_control:
     loop_var: 'app'
-  notify: 'reload apache'
+  notify: 'Reload apache'
   when: app['state'] == 'absent'
 
 - name: 'Include OS specific tasks'
   ansible.builtin.include_tasks: "{{ item }}"
   with_first_found:
     - files:
-      - "{{ ansible_facts['os_family'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
       skip: true

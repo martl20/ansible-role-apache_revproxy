@@ -2,17 +2,20 @@
 galaxy_info:
   author: thulium_drake
   description: Configures a Apache reverse proxy
-  company:
   role_name: apache_revproxy
 
   license: GPLv3
 
-  min_ansible_version: 2.9
+  min_ansible_version: '2.10'
 
   platforms:
+    - name: Debian
+      versions:
+        - bullseye
     - name: EL
       versions:
-        - 7
+        - '7'
+        - '8'
 
   galaxy_tags:
     - apache
