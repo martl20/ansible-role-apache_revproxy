@@ -14,7 +14,7 @@
   DocumentRoot /usr/share/kanboard
 
   <IfModule mod_auth_gssapi.c>
-    <Location "/index.php/apps/user_saml/saml/login">
+    <Location />
       AuthName "Restricted Access"
       AuthType GSSAPI
       {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
@@ -36,7 +36,7 @@
   </IfModule>
 
   <IfModule mod_auth_kerb.c>
-    <Location "/index.php/apps/user_saml/saml/login">
+    <Location />
       AuthName "Restricted Access"
       AuthType Kerberos
       KrbAuthRealms {{ ipaclient_domain | upper }}
