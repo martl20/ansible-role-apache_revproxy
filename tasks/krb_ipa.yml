@@ -21,7 +21,7 @@
     ipa-getkeytab -p HTTP/$(hostname -f)@{{ ipaclient_domain | upper }} -k "{{ apache_revproxy_basedir }}/krb.keytab"
   args:
     creates: "{{ apache_revproxy_basedir }}/krb.keytab"
-  notify: 'reload apache'
+  notify: 'Reload apache'
 
 - name: 'Ensure keytab ownership/permissions'
   ansible.builtin.file:
