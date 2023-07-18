@@ -35,6 +35,11 @@
 
   </Location>
 
+  # The API does it's own authentication, so allow access to that without BasicAuth
+  <Location /zabbix/api_jsonrpc.php>
+    Require all granted
+  </Location>
+
   RedirectMatch ^/$ /zabbix/
   RedirectMatch ^/img/(.*)$ /zabbix/assets/img/$1
   Alias /zabbix /usr/share/zabbix
