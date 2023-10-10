@@ -5,6 +5,7 @@
 #   - name: 'app.example.com'
 #     upstream: 'http://app.int.example.com:8000'
 #     type: 'simple-krb'
+#     location: '/protected'  # Defaults to / if not defined
 #     cert: '/etc/ssl/acme/app.example.com/app.example.com_fullchain.cer'
 #     key: '/etc/ssl/acme/app.example.com/app.example.com.key'
 #     hsts: true

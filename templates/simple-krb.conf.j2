@@ -12,7 +12,7 @@
   SSLCertificateKeyFile {{ app['key'] }}
 
   <IfModule mod_auth_gssapi.c>
-    <Location />
+    <Location {{ app['location'] | default('/') }}>
       AuthName "Restricted Access"
       AuthType GSSAPI
       {% if apache_kerberos_windows_compat %}BrowserMatch Windows gssapi-no-negotiate{% endif %}
@@ -34,7 +34,7 @@
   </IfModule>
 
   <IfModule mod_auth_kerb.c>
-    <Location />
+    <Location {{ app['location'] | default('/') }}>
       AuthName "Restricted Access"
       AuthType Kerberos
       KrbAuthRealms {{ ipaclient_domain | upper }}
