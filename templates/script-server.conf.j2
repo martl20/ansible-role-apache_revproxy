@@ -24,7 +24,7 @@
       GssapiBasicAuth {% if app['krb_passwd'] %}On{% else %}Off{% endif %}
       
       GssapiAllowedMech krb5
-      {% if app['hbac_service'] is defined %}aa
+      {% if app['hbac_service'] is defined %}
       require pam-account {{ app['hbac_service'] }}
       {% else %}
       require valid-user
