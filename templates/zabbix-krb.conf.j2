@@ -15,7 +15,7 @@
 
   {% if app['hsts'] %}Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains" {% endif %}
 
-  <Location />
+  <Location /zabbix/index_http.php>
     AuthName "Restricted Access"
     AuthType GSSAPI
     GssapiCredStore keytab:{{ apache_revproxy_basedir }}/krb.keytab
@@ -28,16 +28,11 @@
 
     GssapiAllowedMech krb5
     {% if app['hbac_service'] is defined %}
-    require pam-account {{ app['hbac_service'] }}
+require pam-account {{ app['hbac_service'] }}
     {% else %}
     require valid-user
     {% endif %}
 
-  </Location>
-
-  # The API does it's own authentication, so allow access to that without BasicAuth
-  <Location /zabbix/api_jsonrpc.php>
-    Require all granted
   </Location>
 
   RedirectMatch ^/$ /zabbix/
