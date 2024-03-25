@@ -15,6 +15,8 @@ IncludeOptional mods-enabled/*.conf
 User {{ apache_revproxy_service_user }}
 Group {{ apache_revproxy_service_user }}
 ServerAdmin root@localhost
+ServerSignature off
+ServerTokens Prod
 
 ErrorLog "{{ apache_revproxy_logdir }}/error_log"
 LogLevel warn
