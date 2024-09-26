@@ -62,7 +62,7 @@
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade$ [NC]
   RewriteCond %{HTTP:Upgrade} ^WebSocket$ [NC]
-  RewriteRule /(.*) ws:/$1 [P,NE]
+  RewriteRule /(.*) ws:/$1 [P,NE,UnsafeAllow3F]
 </Location>
   ProxyPass / {{ app['upstream'] }}/
   ProxyPassReverse / {{ app['upstream'] }}/
