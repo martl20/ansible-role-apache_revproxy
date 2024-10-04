@@ -4,6 +4,9 @@ ServerRoot "{{ apache_revproxy_basedir }}"
 Listen 80
 Listen 443 https
 
+LimitRequestFieldSize {{ GlobalLimitRequestFieldSize }}  # 8104 is default. Kerberos authentication from accounts with many ad groups may need an higher value.
+LimitRequestLine {{ GlobalLimitRequestLine }} # 8104 is default. Kerberos authentication from accounts with many ad groups may need an higher value.
+
 {% if ansible_facts['os_family'] == 'RedHat' %}
 Include conf.modules.d/*.conf
 IncludeOptional conf.d/*.conf
