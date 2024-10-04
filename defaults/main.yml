@@ -34,6 +34,8 @@ apache_kerberos: 'none'
 
 # IPA server used when apache_kerberos == 'ipa'
 apache_ipa_server: 'ipa.example.com'
+GlobalLimitRequestFieldSize: '8190'
+GlobalLimitRequestLine: '8190'
 
 # Automatically create the required Kerberos Principal in IPA
 # Requires credentials for a user with administrative privileges on the host in IPA
